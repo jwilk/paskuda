@@ -135,7 +135,7 @@ int main(int argc, char **argv)
             clear_s(fd, msg_press_tab);
             msg_press_tab = NULL;
             if (c == '\b') {
-                xprintf(fd, msg_no_echo);
+                xprintf(fd, "%s", msg_no_echo);
                 state = STATE_NO_ECHO;
                 continue;
             }
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
         case '\t':
             if (state == STATE_ECHO) {
                 clear_n(fd, len);
-                xprintf(fd, msg_no_echo);
+                xprintf(fd, "%s", msg_no_echo);
             }
             state = STATE_NO_ECHO;
             break;
