@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -134,6 +135,9 @@ int main(int argc, char **argv)
         errno = rc;
         xerror("posix_memalign()");
     }
+    rc = mlock(passwd, buf_size);
+    if (rc < 0)
+        xerror("mlock()");
     size_t len = 0;
     while (1) {
         assert(len < buf_size);
