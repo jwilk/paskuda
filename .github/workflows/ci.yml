@@ -1,0 +1,35 @@
+name: CI
+on:
+- push
+- pull_request
+jobs:
+  main:
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-20.04
+          cc: gcc
+        - os: ubuntu-20.04
+          cc: clang
+        - os: ubuntu-22.04
+          cc: gcc
+        - os: ubuntu-22.04
+          cc: clang
+        - os: macos-11
+          cc: cc
+    runs-on: ${{matrix.os}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: check C compiler version
+      run:
+        ${{matrix.cc}} --version
+    - name: build
+      run:
+        make CC=${{matrix.cc}}
+    - name: run cppcheck
+      if: matrix.cc == 'gcc'
+      run: |
+        sudo apt-get install cppcheck
+        cppcheck --error-exitcode=1 *.c
+
+# vim:ts=2 sts=2 sw=2 et
