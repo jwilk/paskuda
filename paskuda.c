@@ -123,10 +123,20 @@ int main(int argc, char **argv)
     const int fd = STDERR_FILENO;
     xprintf(fd, "%s ", prompt);
     xprintf(fd, "%s", msg_press_tab);
-    char passwd[BUFSIZ];
+    errno = EOVERFLOW;
+    const long page_size = sysconf(_SC_PAGESIZE);
+    if (page_size < 0)
+        xerror("sysconf(_SC_PAGESIZE)");
+    const size_t buf_size = page_size;
+    char *passwd = NULL;
+    int rc = posix_memalign((void **)&passwd, page_size, buf_size);
+    if (rc != 0) {
+        errno = rc;
+        xerror("posix_memalign()");
+    }
     size_t len = 0;
     while (1) {
-        assert(len < sizeof passwd);
+        assert(len < buf_size);
         int rc = read(STDIN_FILENO, passwd + len, 1);
         register char c = passwd[len];
         if (rc < 0)
@@ -167,7 +177,7 @@ int main(int argc, char **argv)
             state = STATE_NO_ECHO;
             break;
         default:
-            if (len < (sizeof passwd) - 1) {
+            if (len < buf_size - 1) {
                 len++;
                 if (state == STATE_ECHO)
                     xprintf(fd, "*");
@@ -183,6 +193,7 @@ int main(int argc, char **argv)
     xprintf(fd, "\n");
     restore_tty();
     xprintf(STDOUT_FILENO, "%s", passwd);
+    free(passwd);
 }
 
 /* vim:set ts=4 sts=4 sw=4 et:*/
