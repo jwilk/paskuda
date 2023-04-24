@@ -2,6 +2,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include <assert.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -125,8 +126,9 @@ int main(int argc, char **argv)
     char passwd[BUFSIZ];
     size_t len = 0;
     while (1) {
-        char c;
-        int rc = read(STDIN_FILENO, &c, 1);
+        assert(len < sizeof passwd);
+        int rc = read(STDIN_FILENO, passwd + len, 1);
+        register char c = passwd[len];
         if (rc < 0)
             xerror("read()");
         if (rc == 0 || c == '\n')
@@ -166,7 +168,6 @@ int main(int argc, char **argv)
             break;
         default:
             if (len < (sizeof passwd) - 1) {
-                passwd[len] = c;
                 len++;
                 if (state == STATE_ECHO)
                     xprintf(fd, "*");
