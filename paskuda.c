@@ -39,6 +39,9 @@ static void xerror(const char *context)
     exit(EXIT_FAILURE);
 }
 
+typedef void *(*memset_fn) (void *s, int c, size_t n);
+static const volatile memset_fn xmemset = memset;
+
 static int tty_fd = -1;
 struct termios orig_tio;
 
@@ -206,6 +209,7 @@ int main(int argc, char **argv)
     xprintf(fd, "\n");
     restore_tty();
     xprintf(STDOUT_FILENO, "%s", passwd);
+    xmemset(passwd, '\0', buf_size);
     free(passwd);
 }
 
