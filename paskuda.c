@@ -12,6 +12,10 @@
 #include <termios.h>
 #include <unistd.h>
 
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
+
 #define PROGRAM_NAME "paskuda"
 
 static void show_usage(FILE *fp)
@@ -138,6 +142,11 @@ int main(int argc, char **argv)
     rc = mlock(passwd, buf_size);
     if (rc < 0)
         xerror("mlock()");
+#ifdef __linux__
+    rc = prctl(PR_SET_DUMPABLE, 0);
+    if (rc < 0)
+        xerror("prctl(PR_SET_DUMPABLE, 0)");
+#endif
     size_t len = 0;
     while (1) {
         assert(len < buf_size);
