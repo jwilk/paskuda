@@ -43,7 +43,7 @@ typedef void *(*memset_fn) (void *s, int c, size_t n);
 static const volatile memset_fn xmemset = memset;
 
 static int tty_fd = -1;
-struct termios orig_tio;
+static struct termios orig_tio;
 
 static void restore_tty()
 {
@@ -91,11 +91,11 @@ static void clear_s(int fd, const char *s)
     clear_n(fd, strlen(s));
 }
 
-const char *prompt = "Password:";
-const char *msg_press_tab = "(press TAB for no echo) ";
-const char *msg_no_echo = "(no echo) ";
+static const char *prompt = "Password:";
+static const char *msg_press_tab = "(press TAB for no echo) ";
+static const char *msg_no_echo = "(no echo) ";
 
-enum {
+static enum {
     STATE_INIT,
     STATE_ECHO,
     STATE_NO_ECHO,
