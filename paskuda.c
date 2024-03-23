@@ -162,7 +162,7 @@ int main(int argc, char **argv)
         if (state == STATE_INIT) {
             clear_s(fd, msg_press_tab);
             msg_press_tab = NULL;
-            if (c == '\b') {
+            if (c == '\b' || c == 0x7F /* DEL */) {
                 xprintf(fd, "%s", msg_no_echo);
                 state = STATE_NO_ECHO;
                 continue;
