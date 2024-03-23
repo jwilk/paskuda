@@ -172,7 +172,7 @@ int main(int argc, char **argv)
         }
         switch (c)
         {
-        case 0x08: // ^H
+        case '\b':
         case 0x7F: // DEL
             if (len) {
                 if (state == STATE_ECHO)
