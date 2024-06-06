@@ -129,7 +129,9 @@ int main(int argc, char **argv)
         prompt = argv[0];
     init_tty(STDIN_FILENO);
     const int fd = STDERR_FILENO;
-    xprintf(fd, "%s ", prompt);
+    xprintf(fd, "%s", prompt);
+    if (prompt[0] && (prompt[strlen(prompt) - 1] != ' '))
+        xprintf(fd, " ");
     xprintf(fd, "%s", msg_press_tab);
     errno = EOVERFLOW;
     const long page_size = sysconf(_SC_PAGESIZE);
